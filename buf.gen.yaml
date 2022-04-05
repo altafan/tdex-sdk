@@ -3,19 +3,28 @@ managed:
   enabled: true
 plugins:
   - remote: buf.build/protocolbuffers/plugins/js
-    out: src/api-spec/generated/js
+    out: src/api-spec/protobuf/gen/js
     opt:
       - import_style=commonjs
       - binary
 
-  - remote: buf.build/grpc/plugins/web
-    out: src/api-spec/generated/js
-    opt:
-      - import_style=typescript
-      - mode=grpcwebtext
+  # - remote: buf.build/grpc/plugins/web
+  #   out: src/api-spec/protobuf/gen/js
+  #   opt:
+  #     - import_style=typescript
+  #     - mode=grpcwebtext
 
-  - remote: buf.build/grpc/plugins/node
-    out: src/api-spec/generated/js
+  - name: grpc-node
+    out: src/api-spec/protobuf/gen/js
+    path: ./node_modules/.bin/grpc_tools_node_protoc_plugin
     opt:
-      - import_style=typescript
-      - grpc_js
+      - ts_out=grpc_js
+      - js_out=import_style=commonjs+dts,binary
+
+  - name: ts-node
+    out: src/api-spec/protobuf/gen/js
+    opt:
+      - service=grpc-node
+      # - import_style=commonjs+dts
+      # - binary
+    path: ./node_modules/.bin/protoc-gen-ts
